@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>jquery practise</title>
+	<link rel="stylesheet" type="text/css" href="../styles/reset.css">
+	<link rel="stylesheet" type="text/css" href="../styles/wraplayout.css">
+	<script src="../js/jquery-3.3.1.js" type="text/javascript"></script>
+<style>
+	button {
+		padding: 5px 10px;
+		margin: 0 0 10px 10px; ;
+	}
+	.demo div {
+		padding: 5px 10px;
+	}
+	.mytest {
+		border: 1px solid green;
+		color: red;
+	}
+	
+
+</style>
+<script type="text/javascript">
+	$(document).ready(function(){
+		// 添加class
+		$("#addc").click(function(){
+			$(".demo>div").addClass("mytest");
+		});
+		// 删除class
+		$("#removec").click(function(){
+			$(".demo>div").removeClass("mytest");
+		});
+		//切换
+		$("#togglec").click(function(){
+			$(".demo>div").toggleClass("mytest");
+		})
+	})
+</script>
+</head>
+<body>
+<div id="wrap">
+	<div class="demo">
+		<button id="addc">添加class</button>
+		<button id="removec">删除class</button>
+		<button id="togglec">切换Class</button>
+		<div class="mytest">
+			<p>你度过的岁月，并不都是你经历的生命。</p>
+			<p>因为，你根本没有注意过它们。</p>
+		</div>
+		
+	</div>
+<button id="turnback"><a href="../index.html">返回目录</a></button>
+</div>
+</body>
+</html>

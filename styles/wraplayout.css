@@ -1,0 +1,30 @@
+html,body {height: 100%;overflow:hidden;}
+body {
+	background: #AAA;
+	font-family: Georgia;
+}
+#wrap {
+	width: 1280px;
+	height: 100%;
+	margin: 0 auto;
+	background-color: #FFF;
+	position: relative;
+}
+#wrap .demo {
+	padding-top: 50px;
+	position: absolute;
+	left:50%;
+	transform: translateX(-50%);
+}
+#turnback{
+	width: 80px;
+	height: 25px;
+	right: 100px;
+	bottom: 50px;
+	position: absolute;
+	background: #777;
+}
+textarea {padding: 5px;}
+#tip {
+	font: normal 22px/1.5em "宋";
+}

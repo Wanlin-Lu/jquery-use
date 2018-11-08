@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>jquery practise</title>
+	<link rel="stylesheet" type="text/css" href="../styles/reset.css">
+	<link rel="stylesheet" type="text/css" href="../styles/wraplayout.css">
+	<script src="../js/jquery-3.3.1.js" type="text/javascript"></script>
+<style>
+	#addpanel {
+		width: 760px;
+
+	}
+	#tbList {
+		margin: 50px auto;
+	}
+	#tbList td,#tbList th{
+		border: 1px solid #000;
+		padding: 5px;
+	}
+</style>
+<script type="text/javascript">
+	//要加载的数据
+	var jsonArr = [
+	  {"id":1, "name":"1刘德华","eamil":"123@126.com","gender":"男"},
+	  { "id": 2, "name": "2刘德华", "eamil": "123@126.com", "gender": "女" },
+	  { "id": 3, "name": "3刘德华", "eamil": "133@126.com", "gender": "女" },
+	  { "id": 4, "name": "4郭富城", "eamil": "113@126.com", "gender": "女" },
+	  { "id": 5, "name": "5张学友", "eamil": "223@126.com", "gender": "男" },
+	  { "id": 6, "name": "6孙红雷", "eamil": "423@126.com", "gender": "男" }
+	];
+
+	//数据加载函数
+	function loadData(){
+		for(var index = 0; index < jsonArr.length; index++) {
+			var $tr = $("<tr><td>"+jsonArr[index].id+"</td><td>"+
+				jsonArr[index].name+"</td><td>"+
+				jsonArr[index].eamil+"</td><td>"+
+				jsonArr[index].gender+"</td><td></td></tr>");
+			var $link = $("<a href='#'>删除</a>");
+			$link.click(function(){
+				$(this).parent().parent().remove();
+			});
+			$("td:last", $tr).append($link);
+			$("#tbList").append($tr);
+		}
+	}
+
+	$(function(){
+		loadData();
+		$("#btnAdd").click(function(){
+			var id = $("#txtID").val();
+			var name = $("#txtName").val();
+			var email = $("#txtEmail").val();
+			var gender = $("#txtGender").val();
+			if((id=="")|(name=="")|(email=="")|(gender=="")){
+				alert("请输入完整信息");
+				return;
+			}
+			var $tr = $("<tr><td>"+id+"</td><td>"+
+				name+"</td><td>"+
+				email+"</td><td>"+
+				gender+"</td><td></td></tr>");
+
+			var $link = $("<a href='#'>删除</a>");
+			$link.click(function(){
+				$(this).parents("tr").remove();
+			});
+			$("td:last", $tr).append($link);
+			$("#tbList").append($tr);
+		})
+	})
+</script>
+</head>
+<body>
+<div id="wrap">
+	<div class="demo">
+		<div id="addpanel">
+			ID:<input type="text" id="txtID" value="7">
+			姓名：<input type="text" id="txtName" value="Beyond">
+			email:<input type="email" id="txtEmail" value="999@126.com">
+			性别：<input type="text" id="txtGender" value="男">
+			<input type="button" id="btnAdd" value="添加" name="">
+		</div>
+		<br>
+		<table id="tbList">
+			<tr>
+				<th>ID</th><th>姓名</th><th>邮箱</th><th>性别</th><th>操作</th>
+			</tr>
+		</table>
+	</div>
+<button id="turnback"><a href="../index.html">返回目录</a></button>
+</div>
+</body>
+</html>

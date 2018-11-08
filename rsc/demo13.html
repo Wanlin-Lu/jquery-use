@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>jquery practise</title>
+	<link rel="stylesheet" type="text/css" href="../styles/reset.css">
+	<link rel="stylesheet" type="text/css" href="../styles/wraplayout.css">
+	<script src="../js/jquery-3.3.1.js" type="text/javascript"></script>
+<style>
+	thead {
+		background-color: Blue;
+		color: white;
+	}
+	.clickable { text-decoration: underline; }
+	.hover {background-color: #5dd354;}
+	.sorted {background-color: #ded070;}
+	.page-number {
+		color: black;
+		margin: 2px 10px;
+		padding: 2px 5px;
+	}
+	.active{
+		border: solid 1px red;
+		background-color: #76a7d2;
+	}
+	.pager {
+		margin-bottom: 10px;
+		margin-left: 20px;
+	}
+	#thetable {
+		background: green;
+		font-size: 12px;
+	}
+	th,td {
+		border: 1px solid #888;
+		padding: 5px 10px;
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+	}
+	tr.even {background: #EEEEEE;}
+	tr.odd {background: #FFFFEE;}
+</style>
+<script type="text/javascript">
+	// 使用插件
+	$(function(){
+
+		$.fn.alternateRowColors = function() {
+			//rows odd
+			$("tbody tr:odd",this).removeClass('even').addClass('odd');
+			//rows even
+			$("tbody tr:even",this).removeClass('odd').addClass('even');
+			return this;
+		};
+
+		$("table.myTable").each(function(){
+			$table = $(this);
+			$table.alternateRowColors($table);
+			$('th',$table).each(function(column) {
+				var findSortKey;
+				//sort by alpha
+				if($(this).is('.sort-alpha')) {
+					findSortKey = function($cell) {
+						return $cell.find('sort-key').text().toUpperCase()+''+$cell.text().toUpperCase();
+					};
+				}
+				//sort by number
+				else if($(this).is('.sort-numeric')) {
+					findSortKey = function($cell) {
+						var key = parseFloat($cell.text().replace(/^[^\d.]*/,''));
+						return isNaN(key)?0:key;
+					};
+				}
+				//sort by Date
+				else if($(this).is('.sort-date')) {
+					findSortKey = function($cell) {
+						return Date.parse('1 ' + $cell.text());
+					};
+				}
+				if(findSortKey) {
+					$(this).addClass('clickable').hover(function() {
+						$(this).addClass('hover');
+					}, function() {
+						$(this).removeClass('hover');
+					}).click(function() {
+						//反向排序声明
+						var newDirection = 1;
+						if($(this).is('.sorted-asc')) {
+							newDirection = -1;
+						}
+						var rows = $table.find('tbody>tr').get();//change data to Array;
+						$.each(rows, function(index,row) {
+							row.sortKey = findSortKey($(row).children('td').eq(column));
+						});
+						rows.sort(function(a,b) {
+							if(a.sortKey < b.sortKey) return -newDirection;
+							if(a.sortKey > b.sortKey) return newDirection;
+							return 0;
+						});
+						$.each(rows,function(index,row) {
+							$table.children('tbody').append(row);
+							row.sortKey = null;
+						});
+						$table.find('th').removeClass('sorted-asc').removeClass('sorted-desc');
+						var $sortHead = $table.find('th').filter(':nth-child(' + (column+1)+')');
+						//实现反向排序
+						if(newDirection == 1) {
+							$sortHead.addClass('sorted-asc');
+						}else{
+							$sortHead.addClass('sorted-desc');
+						}
+						//调用隔行变色函数
+						$table.alternateRowColors($table);
+						//移除已排序的样式，添加样式到当前列
+						$table.find('td').removeClass('sorted').filter(':nth-child('+(column+1)+')').addClass('sorted');
+						$table.trigger('repaginate');
+					});
+				}
+			});
+		});
+
+		$('table.paginated').each(function() {
+			var currentPage = 0;
+			var numPerPage = 10;
+			var $table = $(this);
+			$table.bind('repaginate',function() {
+				$table.find('tbody tr').hide().slice(currentPage*numPerPage,(currentPage+1)*numPerPage).show();
+			});
+			var numRows = $table.find('tbody tr').length;
+			var numPages = Math.ceil(numRows/numPerPage);
+			var $pager = $('<div class="pager"></div>');
+			for(var page = 0; page<numPages;page++){
+				$('<span class="page-number"></span>').text(page+1)
+					.bind('click',{newPage:page},function(event) {
+						currentPage = event.data['newPage'];
+						$table.trigger('repaginate');
+						$(this).addClass('active').siblings().removeClass('active');
+					}).appendTo($pager).addClass('clickable');
+			}
+			$pager.insertBefore($table);
+			$table.trigger('repaginate');
+			$pager.find('span.page-number:first').addClass('active');
+		});
+	});
+</script>
+</head>
+<body>
+<div id="wrap">
+	<div class="demo">
+		<table class="myTable paginated">
+	      <thead>
+	        <tr>
+	          <th class="sort-alpha"> Last Name </th>
+	          <th class="sort-alpha"> First Name </th>
+	          <th> Email </th>
+	          <th class="sort-numeric"> Due </th>
+	          <th class="sort-date"> Date </th>
+	          <th> Web Site </th>
+	        </tr>
+	      </thead>
+	      <tbody>
+	        <tr>
+	          <td> tmith </td>
+	          <td> erthn </td>
+	          <td> eth@gmail.com </td>
+	          <td> $34.00 </td>
+	          <td> 14 2009 </td>
+	          <td> tp://www.baidu.com </td>
+	        </tr>
+	        <tr>
+	          <td> rose </td>
+	          <td> softwhy.com </td>
+	          <td> jsmith@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> Mar 2009 </td>
+	          <td> softwhy.com </td>
+	        </tr>
+	        <tr>
+	          <td> CSmith </td>
+	          <td> John </td>
+	          <td> DDDD@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> Mar 2009 </td>
+	          <td> http://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> Smith </td>
+	          <td> John </td>
+	          <td> sdsf@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> f32 2009 </td>
+	          <td> ffttp://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> CSmith </td>
+	          <td> John </td>
+	          <td> DDDD@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> Mar 2009 </td>
+	          <td> http://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> Smith </td>
+	          <td> John </td>
+	          <td> sdsf@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> f32 2009 </td>
+	          <td> ffttp://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> CSmith </td>
+	          <td> John </td>
+	          <td> DDDD@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> Mar 2009 </td>
+	          <td> http://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> Smith </td>
+	          <td> John </td>
+	          <td> sdsf@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> f32 2009 </td>
+	          <td> ffttp://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> CSmith </td>
+	          <td> John </td>
+	          <td> DDDD@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> Mar 2009 </td>
+	          <td> http://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> Smith </td>
+	          <td> John </td>
+	          <td> sdsf@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> f32 2009 </td>
+	          <td> ffttp://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> CSmith </td>
+	          <td> John </td>
+	          <td> DDDD@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> Mar 2009 </td>
+	          <td> http://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> Smith </td>
+	          <td> John </td>
+	          <td> sdsf@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> f32 2009 </td>
+	          <td> ffttp://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> CSmith </td>
+	          <td> John </td>
+	          <td> DDDD@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> Mar 2009 </td>
+	          <td> http://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> Smith </td>
+	          <td> John </td>
+	          <td> sdsf@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> f32 2009 </td>
+	          <td> ffttp://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> CSmith </td>
+	          <td> John </td>
+	          <td> DDDD@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> Mar 2009 </td>
+	          <td> http://www.softwhy.com</td>
+	        </tr>
+	        <tr>
+	          <td> Smith </td>
+	          <td> John </td>
+	          <td> sdsf@gmail.com </td>
+	          <td> $50.00 </td>
+	          <td> f32 2009 </td>
+	          <td> ffttp://www.softwhy.com</td>
+	        </tr>
+	      </tbody>
+	    </table>
+	</div>
+<button id="turnback"><a href="../index.html">返回目录</a></button>
+</div>
+</body>
+</html>
