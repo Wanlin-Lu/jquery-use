@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>jquery practise</title>
+	<link rel="stylesheet" type="text/css" href="../styles/reset.css">
+	<link rel="stylesheet" type="text/css" href="../styles/wraplayout.css">
+	<script src="../js/jquery-3.3.1.js" type="text/javascript"></script>
+	<script src="../js/index.js" type="text/javascript"></script>
+<style>
+	#code {
+		width: 500px;
+		font: normal 18px/1.5em '宋';
+	}
+</style>
+<script type="text/javascript">
+	$(function(){
+		$.fn.typewriter = function () {
+			this.each(function(){
+				var $ele = $(this),str = $ele.html(),sum=0;
+				$ele.html("");
+				var timer = setInterval(function() {
+					var current = str.substr(sum,1);
+					if(current == "<") {
+						sum = str.indexOf('>',sum) +1;
+					}else{
+						sum++;
+					}
+					var curr = str.substr(0,sum);
+					$ele.html(curr+(sum&1?"_":''));
+					if(sum >= str.length) {
+						clearInterval(timer);
+					}
+				},50);
+			});
+			return this;
+		};
+		$("#code").typewriter();
+	});
+</script>
+</head>
+<body>
+<div id="wrap">
+	<div class="demo">
+		<div id="code">
+			Life is a period of time, which you can choose the way how to spend.<br>
+			You can make every minute means a lot,but you can`t keep that way.<br>
+			But you must set a ambutious perpurse to go after.<br>Or your time will
+			definately be wasted on small things.
+		</div>
+	</div>
+<button id="turnback"><a href="http://www.luwanlin.com/">返回目录</a></button>
+</div>
+
+</body>
+</html>

@@ -23,6 +23,7 @@ body {
 	bottom: 50px;
 	position: absolute;
 	background: #777;
+	cursor: pointer;
 }
 textarea {padding: 5px;}
 #tip {
